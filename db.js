@@ -9,13 +9,4 @@ const connection = mysql.createConnection({
   database: DB_NAME,
 });
 
-// async function connectAndQuery(query) {
-//   connect.query(
-//       'SELECT * FROM `member`',
-//       function(err, results, fields) {
-//         res.json(results);
-//       }
-//     );
-// }
-
 module.exports = connection;

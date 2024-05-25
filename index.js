@@ -1,59 +1,87 @@
+// index.js
 const express = require("express");
-const mysql = require("mysql2");
-const app = express();
+const cors = require("cors");
 const bodyParser = require("body-parser");
 
-// const _ = require("lodash");
-const cors = require("cors");
-const { request } = require("express");
-require("dotenv").config();
-const { DB_NAME, DB_HOST, DB_PASS, DB_USER } = process.env;
-const path = require("path");
+const authRoutes = require("./routes/authRoutes");
+const memberRoutes = require("./routes/memberRoutes");
+const packageRoutes = require("./routes/packageRoutes");
+const videoRoutes = require("./routes/videoRoutes");
+const typeMovieRoutes = require("./routes/typeMovieRoutes")
+const movieLikeRoutes = require("./routes/movieLikeRoutes")
+const sumPriceRoutes = require("./routes/SumPriceRoutes")
 
-const connection = mysql.createConnection({
-  host: DB_HOST,
-  user: DB_USER,
-  password: DB_PASS,
-  database: DB_NAME,
-});
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors());
 
+// Custom CORS headers
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow_Origin", "*");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-Whith, Content-Type, Accept",
-    "multipart/form-data"
+    "Origin, X-Requested-With, Content-Type, Accept"
   );
   next();
 });
 
-connection.connect((err) => {
-  if (err) {
-    console.log("Not connect database");
-    return;
-  }
-  app.get("/", async (req, res) => {
-    console.log("Connect Database Succss fully");
-    return res.status(200).json("Connect Database");
-  });
+app.get("/", (req, res) => {
+  res.status(200).send("Connection API");
 });
 
-console.log(`Port :: ${process.env.PORT}`);
+// Routes
+app.use("/auth", authRoutes);
+app.use("/member", memberRoutes);
+app.use("/package", packageRoutes);
+app.use("/video", videoRoutes);
+app.use("/typemovie", typeMovieRoutes);
+app.use("/movielike", movieLikeRoutes);
+app.use("/sumprice",sumPriceRoutes)
 
-app.use(cors());
-app.use(express.json());
 
-app.use("/member", require("./route/member"));
-app.use("/package", require("./route/package"));
-//app.use("/video", require (".route/video"));
-app.use("/video", require("./route/video"));
 
-app.listen(process.env.PORT, function () {
-  console.log("CORS-enabled web server listening on port ", process.env.PORT);
+
+
+
+// // index.js
+// const express = require("express");
+// const app = express();
+// const cors = require("cors");
+// const bodyParser = require("body-parser");
+// const authRoutes = require("./routes/authRoutes");
+// const memberRoutes = require("./routes/memberRoutes");
+// const packageRoutes = require("./routes/packageRoutes");
+// const vedioRoutes = require("./routes/vedioRoutes");
+
+// app.use(express.urlencoded({ extended: false }));
+// app.use(bodyParser.urlencoded({extended:true}))
+// app.use(bodyParser.json())
+// app.use(cors())
+// app.use((req, res, next) => {
+//     res.header("Access-Control-Allow_Origin", "*");
+//     res.header(
+//       "Access-Control-Allow-Headers",
+//       "Origin, X-Requested-Whith, Content-Type, Accept",
+//        "multipart/form-data",
+//     );
+//     next();
+//   });
+  
+// app.use(cors()); // Use the CORS middleware
+// app.use(bodyParser.json());
+
+// app.get("/", (req, res) => {
+//   res.status(200).send("connection API");
+// });
+
+// app.use("/auth", authRoutes);
+// app.use("/member", memberRoutes);
+// app.use("/package", packageRoutes);
+// app.use("/video", vedioRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
